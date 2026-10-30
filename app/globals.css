@@ -1,0 +1,246 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ── Palette mapped from the original stylesheet ─────────────────────────── */
+:root {
+  --radius: 0.75rem;
+
+  --background: #ffffff;
+  --foreground: #111118;
+  --card: #ffffff;
+  --card-foreground: #111118;
+  --popover: #ffffff;
+  --popover-foreground: #111118;
+
+  --primary: #7f77dd;
+  --primary-foreground: #ffffff;
+  --secondary: #f6f6f9;
+  --secondary-foreground: #111118;
+  --muted: #f6f6f9;
+  --muted-foreground: #9090a8;
+  --accent: #eeedfe;
+  --accent-foreground: #3c3489;
+  --destructive: #e24b4a;
+  --destructive-foreground: #ffffff;
+
+  --border: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.18);
+  --input: rgba(0, 0, 0, 0.1);
+  --ring: #7f77dd;
+
+  --bg2: #f6f6f9;
+  --bg3: #f0f0f5;
+  --fg2: #55556a;
+  --fg3: #9090a8;
+
+  /* status: stripe colours are theme-independent, bg/txt switch in dark */
+  --status-done: #1d9e75;
+  --status-wip: #378add;
+  --status-parked: #ef9f27;
+  --status-open: #888780;
+  --status-done-bg: #eaf3de;
+  --status-done-txt: #085041;
+  --status-wip-bg: #e6f1fb;
+  --status-wip-txt: #0c447c;
+  --status-parked-bg: #faeeda;
+  --status-parked-txt: #633806;
+  --status-open-bg: #f1efe8;
+  --status-open-txt: #444441;
+  --status-danger-bg: #fcebeb;
+  --status-danger-txt: #a32d2d;
+
+  --q1: #378add;
+  --q2: #1d9e75;
+  --q3: #ef9f27;
+  --q4: #7f77dd;
+  --q1-bg: #e6f1fb;
+  --q1-txt: #0c447c;
+  --q2-bg: #eaf3de;
+  --q2-txt: #085041;
+  --q3-bg: #faeeda;
+  --q3-txt: #633806;
+  --q4-bg: #eeedfe;
+  --q4-txt: #3c3489;
+  --qna-bg: #f1efe8;
+  --qna-txt: #444441;
+}
+
+.dark {
+  --background: #111118;
+  --foreground: #eeeaf8;
+  --card: #111118;
+  --card-foreground: #eeeaf8;
+  --popover: #111118;
+  --popover-foreground: #eeeaf8;
+
+  --primary: #7f77dd;
+  --primary-foreground: #ffffff;
+  --secondary: #1a1a24;
+  --secondary-foreground: #eeeaf8;
+  --muted: #1a1a24;
+  --muted-foreground: #8b88b0;
+  --accent: #1a1535;
+  --accent-foreground: #a78bfa;
+  --destructive: #e24b4a;
+  --destructive-foreground: #ffffff;
+
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #7f77dd;
+
+  --bg2: #1a1a24;
+  --bg3: #22222e;
+  --fg2: #8b88b0;
+  --fg3: #454368;
+
+  --status-done-bg: #0a2010;
+  --status-done-txt: #6ee7a0;
+  --status-wip-bg: #071828;
+  --status-wip-txt: #67e8f9;
+  --status-parked-bg: #201800;
+  --status-parked-txt: #fbbf24;
+  --status-open-bg: #1a1a24;
+  --status-open-txt: #9090a8;
+  --status-danger-bg: #2a0a0a;
+  --status-danger-txt: #f87171;
+
+  --q1-bg: #071828;
+  --q1-txt: #67e8f9;
+  --q2-bg: #0a2010;
+  --q2-txt: #6ee7a0;
+  --q3-bg: #201800;
+  --q3-txt: #fbbf24;
+  --q4-bg: #1a1535;
+  --q4-txt: #a78bfa;
+  --qna-bg: #1a1a24;
+  --qna-txt: #9090a8;
+}
+
+@theme inline {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-bg2: var(--bg2);
+  --color-bg3: var(--bg3);
+  --color-fg2: var(--fg2);
+  --color-fg3: var(--fg3);
+
+  --color-status-done: var(--status-done);
+  --color-status-wip: var(--status-wip);
+  --color-status-parked: var(--status-parked);
+  --color-status-open: var(--status-open);
+  --color-status-done-bg: var(--status-done-bg);
+  --color-status-done-txt: var(--status-done-txt);
+  --color-status-wip-bg: var(--status-wip-bg);
+  --color-status-wip-txt: var(--status-wip-txt);
+  --color-status-parked-bg: var(--status-parked-bg);
+  --color-status-parked-txt: var(--status-parked-txt);
+  --color-status-open-bg: var(--status-open-bg);
+  --color-status-open-txt: var(--status-open-txt);
+  --color-status-danger-bg: var(--status-danger-bg);
+  --color-status-danger-txt: var(--status-danger-txt);
+
+  --color-q1: var(--q1);
+  --color-q2: var(--q2);
+  --color-q3: var(--q3);
+  --color-q4: var(--q4);
+  --color-q1-bg: var(--q1-bg);
+  --color-q1-txt: var(--q1-txt);
+  --color-q2-bg: var(--q2-bg);
+  --color-q2-txt: var(--q2-txt);
+  --color-q3-bg: var(--q3-bg);
+  --color-q3-txt: var(--q3-txt);
+  --color-q4-bg: var(--q4-bg);
+  --color-q4-txt: var(--q4-txt);
+  --color-qna-bg: var(--qna-bg);
+  --color-qna-txt: var(--qna-txt);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+  }
+}
+
+@layer utilities {
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+  .animate-pulse-dot {
+    animation: pulse-dot 2s infinite;
+  }
+
+  /* 🔨 continuously hammering: wind up, strike, small bounce, repeat */
+  @keyframes hammering {
+    0%   { transform: rotate(0deg); }
+    35%  { transform: rotate(-40deg); }
+    55%  { transform: rotate(12deg); }
+    65%  { transform: rotate(-4deg); }
+    75%, 100% { transform: rotate(0deg); }
+  }
+  .animate-hammer {
+    display: inline-block;
+    transform-origin: 75% 75%; /* pivot near the handle, like a wrist */
+    animation: hammering 0.9s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
