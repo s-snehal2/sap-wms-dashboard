@@ -1,0 +1,233 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "2c912510-dd26-4e6c-9d15-01ce70cde488",
+  "prevIds": [
+    "f1af5713-55d6-49de-8dbf-718da2bf3659"
+  ],
+  "footprints": [
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "notes"
+      ],
+      "writes": [
+        "s|rls|public.notes",
+        "e|rls|public.notes"
+      ],
+      "reads": [
+        "n|tbl|public.notes",
+        "n|sch|public"
+      ],
+      "sqlHash": "ba5a85108ca80436"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "pins"
+      ],
+      "writes": [
+        "s|rls|public.pins",
+        "e|rls|public.pins"
+      ],
+      "reads": [
+        "n|tbl|public.pins",
+        "n|sch|public"
+      ],
+      "sqlHash": "711561f8116f4394"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "profiles"
+      ],
+      "writes": [
+        "s|rls|public.profiles",
+        "e|rls|public.profiles"
+      ],
+      "reads": [
+        "n|tbl|public.profiles",
+        "n|sch|public"
+      ],
+      "sqlHash": "314f25a6c283aa24"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "projects"
+      ],
+      "writes": [
+        "s|rls|public.projects",
+        "e|rls|public.projects"
+      ],
+      "reads": [
+        "n|tbl|public.projects",
+        "n|sch|public"
+      ],
+      "sqlHash": "dd81867b637ba219"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "remarks"
+      ],
+      "writes": [
+        "s|rls|public.remarks",
+        "e|rls|public.remarks"
+      ],
+      "reads": [
+        "n|tbl|public.remarks",
+        "n|sch|public"
+      ],
+      "sqlHash": "f9d91e3c65574301"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "notes",
+        "owner_id"
+      ],
+      "writes": [
+        "s|colprop|public.notes.owner_id.default"
+      ],
+      "reads": [
+        "n|tbl|public.notes",
+        "n|sch|public",
+        "n|col|public.notes.owner_id"
+      ],
+      "sqlHash": "a2083f30a470cc3d"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "pins",
+        "owner_id"
+      ],
+      "writes": [
+        "s|colprop|public.pins.owner_id.default"
+      ],
+      "reads": [
+        "n|tbl|public.pins",
+        "n|sch|public",
+        "n|col|public.pins.owner_id"
+      ],
+      "sqlHash": "4e848a48f1b0c056"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "projects",
+        "owner_id"
+      ],
+      "writes": [
+        "s|colprop|public.projects.owner_id.default"
+      ],
+      "reads": [
+        "n|tbl|public.projects",
+        "n|sch|public",
+        "n|col|public.projects.owner_id"
+      ],
+      "sqlHash": "a98057a0fd3c4ab5"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "remarks",
+        "author_id"
+      ],
+      "writes": [
+        "s|colprop|public.remarks.author_id.default"
+      ],
+      "reads": [
+        "n|tbl|public.remarks",
+        "n|sch|public",
+        "n|col|public.remarks.author_id"
+      ],
+      "sqlHash": "bdda5269f81b021a"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"notes\"]",
+      "set": {
+        "isRlsEnabled": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"pins\"]",
+      "set": {
+        "isRlsEnabled": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"profiles\"]",
+      "set": {
+        "isRlsEnabled": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"projects\"]",
+      "set": {
+        "isRlsEnabled": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"remarks\"]",
+      "set": {
+        "isRlsEnabled": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"notes\",\"owner_id\"]",
+      "set": {
+        "default": null
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"pins\",\"owner_id\"]",
+      "set": {
+        "default": null
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"projects\",\"owner_id\"]",
+      "set": {
+        "default": null
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"remarks\",\"author_id\"]",
+      "set": {
+        "default": null
+      }
+    }
+  ]
+}

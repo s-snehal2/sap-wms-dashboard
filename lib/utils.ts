@@ -50,7 +50,8 @@ export const today = () => new Date().toISOString().split("T")[0];
 
 export const avgPct = (ps: Project[]) => (ps.length ? Math.round(ps.reduce((a, p) => a + p.pct, 0) / ps.length) : 0);
 
-export const countBy = (ps: Project[], status: string) => ps.filter((p) => p.status === status).length;
+export const countBy = (ps: Project[], status: string) =>
+  ps.filter((p) => normStatus(p.status) === status).length;
 
 export const statusCounts = (ps: Project[]) => ({
   WIP: countBy(ps, "WIP"),

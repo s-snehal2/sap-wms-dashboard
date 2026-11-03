@@ -1,6 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
-import { Fragment } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown, MessageSquarePlus } from "lucide-react";
 import { PIN_EMOJI, PROJECT_FILTERS, statusColor } from "@/lib/constants";
 import type { Project, Remark } from "@/lib/types";
@@ -15,7 +14,9 @@ interface Props extends RowActionHandlers {
   projects: Project[];
   filter: string;
   onFilter: (f: string) => void;
-  onReset: () => void;
+  onReset?: () => void;
+  /** Show who owns each project (admins and HODs see other people's work). */
+  showOwner?: boolean;
   remarks: Remark[];
   onAddRemark: (pid: string, text: string) => void;
   onDeleteRemark: (id: string) => void;
@@ -34,7 +35,7 @@ const COLS: { key: SortCol | null; label: string; width?: number }[] = [
   { key: null, label: "Actions", width: 96 },
 ];
 
-export default function ProjectsView({ projects, filter, onFilter, onReset, remarks, onAddRemark, onDeleteRemark, ...actions }: Props) {
+export default function ProjectsView({ projects, filter, onFilter, onReset, showOwner, remarks, onAddRemark, onDeleteRemark, ...actions }: Props) {
   const [sortCol, setSortCol] = useState<SortCol>("sr");
   const [sortDir, setSortDir] = useState<1 | -1>(1);
   const [openRemarks, setOpenRemarks] = useState<string | null>(null);
@@ -75,9 +76,11 @@ export default function ProjectsView({ projects, filter, onFilter, onReset, rema
         </div>
         <div className="flex items-center gap-3 text-[11px] text-fg3">
           <span>{rows.length} shown · click a row to edit</span>
-          <button className="underline underline-offset-2 hover:text-foreground" onClick={onReset} title="Replace all projects with the built-in sample list (undo available)">
-            Reset sample data
-          </button>
+          {onReset && (
+            <button className="underline underline-offset-2 hover:text-foreground" onClick={onReset} title="Replace all projects with the built-in sample list (undo available)">
+              Reset sample data
+            </button>
+          )}
         </div>
       </div>
 
@@ -132,8 +135,14 @@ export default function ProjectsView({ projects, filter, onFilter, onReset, rema
                         {p.name}
                       </span>
                       {pinned && <PinMark compact />}
+                      {p.editable === false && (
+                        <span className="shrink-0 text-[9px] font-semibold uppercase tracking-wide px-1.5 rounded-full bg-bg3 text-fg2" title="You can view this team member's project but not change it">
+                          view only
+                        </span>
+                      )}
                     </div>
                     <div className="text-[10px] text-fg3 mt-px truncate" title={p.notes || undefined}>
+                      {showOwner && p.ownerName && <span className="font-medium text-fg2">{p.ownerName} · </span>}
                       {p.phase}
                       {p.notes ? " · " + p.notes : ""}
                     </div>
@@ -172,7 +181,10 @@ export default function ProjectsView({ projects, filter, onFilter, onReset, rema
                             <span className="truncate text-[11px] text-foreground">{latest.text}</span>
                             {pr.length > 1 && <span className="shrink-0 text-[9px] font-semibold px-1.5 rounded-full bg-primary text-primary-foreground">{pr.length}</span>}
                           </div>
-                          <div className="text-[10px] text-fg3">{formatDateTime(latest.at)}</div>
+                          <div className="text-[10px] text-fg3 truncate">
+                            {latest.author ? `${latest.author} · ` : ""}
+                            {formatDateTime(latest.at)}
+                          </div>
                         </>
                       ) : (
                         <span className="inline-flex items-center gap-1 text-[11px] text-fg3">

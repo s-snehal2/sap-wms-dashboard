@@ -1,0 +1,1562 @@
+{
+  "type": "base",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "f1af5713-55d6-49de-8dbf-718da2bf3659",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "user_role"
+      ],
+      "writes": [
+        "s|enum|public.user_role",
+        "n|enum|public.user_role",
+        "e|enum|public.user_role",
+        "n|type|public.user_role"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_sequence",
+      "statementTarget": [
+        "sequence",
+        "public",
+        "note_id_seq"
+      ],
+      "writes": [
+        "s|seq|public.note_id_seq",
+        "n|seq|public.note_id_seq",
+        "e|seq|public.note_id_seq",
+        "n|rel|public.note_id_seq"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_sequence",
+      "statementTarget": [
+        "sequence",
+        "public",
+        "project_pid_seq"
+      ],
+      "writes": [
+        "s|seq|public.project_pid_seq",
+        "n|seq|public.project_pid_seq",
+        "e|seq|public.project_pid_seq",
+        "n|rel|public.project_pid_seq"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "notes"
+      ],
+      "writes": [
+        "s|tbl|public.notes",
+        "n|tbl|public.notes",
+        "e|tbl|public.notes",
+        "n|rel|public.notes",
+        "n|type|public.notes",
+        "n|rel|public.notes_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "pins"
+      ],
+      "writes": [
+        "s|tbl|public.pins",
+        "n|tbl|public.pins",
+        "e|tbl|public.pins",
+        "n|rel|public.pins",
+        "n|type|public.pins",
+        "n|rel|public.pins_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "profiles"
+      ],
+      "writes": [
+        "s|tbl|public.profiles",
+        "n|tbl|public.profiles",
+        "e|tbl|public.profiles",
+        "n|rel|public.profiles",
+        "n|type|public.profiles",
+        "n|rel|public.profiles_pkey",
+        "n|rel|public.profiles_email_key"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.user_role"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "projects"
+      ],
+      "writes": [
+        "s|tbl|public.projects",
+        "n|tbl|public.projects",
+        "e|tbl|public.projects",
+        "n|rel|public.projects",
+        "n|type|public.projects",
+        "n|rel|public.projects_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "remarks"
+      ],
+      "writes": [
+        "s|tbl|public.remarks",
+        "n|tbl|public.remarks",
+        "e|tbl|public.remarks",
+        "n|rel|public.remarks",
+        "n|type|public.remarks",
+        "n|rel|public.remarks_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "notes",
+        "notes_owner_id_idx"
+      ],
+      "writes": [
+        "s|idx|public.notes_owner_id_idx",
+        "n|idx|public.notes_owner_id_idx",
+        "e|idx|public.notes_owner_id_idx",
+        "n|rel|public.notes_owner_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.notes",
+        "n|sch|public",
+        "n|col|public.notes.owner_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "notes",
+        "notes_proj_pid_idx"
+      ],
+      "writes": [
+        "s|idx|public.notes_proj_pid_idx",
+        "n|idx|public.notes_proj_pid_idx",
+        "e|idx|public.notes_proj_pid_idx",
+        "n|rel|public.notes_proj_pid_idx"
+      ],
+      "reads": [
+        "n|tbl|public.notes",
+        "n|sch|public",
+        "n|col|public.notes.proj_pid"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "pins",
+        "pins_pid_idx"
+      ],
+      "writes": [
+        "s|idx|public.pins_pid_idx",
+        "n|idx|public.pins_pid_idx",
+        "e|idx|public.pins_pid_idx",
+        "n|rel|public.pins_pid_idx"
+      ],
+      "reads": [
+        "n|tbl|public.pins",
+        "n|sch|public",
+        "n|col|public.pins.pid"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "profiles",
+        "profiles_hod_id_idx"
+      ],
+      "writes": [
+        "s|idx|public.profiles_hod_id_idx",
+        "n|idx|public.profiles_hod_id_idx",
+        "e|idx|public.profiles_hod_id_idx",
+        "n|rel|public.profiles_hod_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.profiles",
+        "n|sch|public",
+        "n|col|public.profiles.hod_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "profiles",
+        "profiles_role_idx"
+      ],
+      "writes": [
+        "s|idx|public.profiles_role_idx",
+        "n|idx|public.profiles_role_idx",
+        "e|idx|public.profiles_role_idx",
+        "n|rel|public.profiles_role_idx"
+      ],
+      "reads": [
+        "n|tbl|public.profiles",
+        "n|sch|public",
+        "n|col|public.profiles.role"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "projects",
+        "projects_owner_id_idx"
+      ],
+      "writes": [
+        "s|idx|public.projects_owner_id_idx",
+        "n|idx|public.projects_owner_id_idx",
+        "e|idx|public.projects_owner_id_idx",
+        "n|rel|public.projects_owner_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.projects",
+        "n|sch|public",
+        "n|col|public.projects.owner_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "projects",
+        "projects_status_idx"
+      ],
+      "writes": [
+        "s|idx|public.projects_status_idx",
+        "n|idx|public.projects_status_idx",
+        "e|idx|public.projects_status_idx",
+        "n|rel|public.projects_status_idx"
+      ],
+      "reads": [
+        "n|tbl|public.projects",
+        "n|sch|public",
+        "n|col|public.projects.status"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "projects",
+        "projects_quarter_idx"
+      ],
+      "writes": [
+        "s|idx|public.projects_quarter_idx",
+        "n|idx|public.projects_quarter_idx",
+        "e|idx|public.projects_quarter_idx",
+        "n|rel|public.projects_quarter_idx"
+      ],
+      "reads": [
+        "n|tbl|public.projects",
+        "n|sch|public",
+        "n|col|public.projects.quarter"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "remarks",
+        "remarks_pid_idx"
+      ],
+      "writes": [
+        "s|idx|public.remarks_pid_idx",
+        "n|idx|public.remarks_pid_idx",
+        "e|idx|public.remarks_pid_idx",
+        "n|rel|public.remarks_pid_idx"
+      ],
+      "reads": [
+        "n|tbl|public.remarks",
+        "n|sch|public",
+        "n|col|public.remarks.pid"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "remarks",
+        "remarks_author_id_idx"
+      ],
+      "writes": [
+        "s|idx|public.remarks_author_id_idx",
+        "n|idx|public.remarks_author_id_idx",
+        "e|idx|public.remarks_author_id_idx",
+        "n|rel|public.remarks_author_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.remarks",
+        "n|sch|public",
+        "n|col|public.remarks.author_id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "notes"
+      ],
+      "writes": [
+        "s|fk|public.notes.notes_owner_id_profiles_id_fkey",
+        "n|fk|public.notes.notes_owner_id_profiles_id_fkey",
+        "e|fk|public.notes.notes_owner_id_profiles_id_fkey",
+        "n|con|public.notes.notes_owner_id_profiles_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.notes",
+        "n|sch|public",
+        "n|tbl|public.profiles",
+        "n|sch|public",
+        "n|col|public.notes.owner_id",
+        "n|col|public.profiles.id",
+        "e|uniqueness|public.profiles.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "notes"
+      ],
+      "writes": [
+        "s|fk|public.notes.notes_proj_pid_projects_pid_fkey",
+        "n|fk|public.notes.notes_proj_pid_projects_pid_fkey",
+        "e|fk|public.notes.notes_proj_pid_projects_pid_fkey",
+        "n|con|public.notes.notes_proj_pid_projects_pid_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.notes",
+        "n|sch|public",
+        "n|tbl|public.projects",
+        "n|sch|public",
+        "n|col|public.notes.proj_pid",
+        "n|col|public.projects.pid",
+        "e|uniqueness|public.projects.pid"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "pins"
+      ],
+      "writes": [
+        "s|fk|public.pins.pins_owner_id_profiles_id_fkey",
+        "n|fk|public.pins.pins_owner_id_profiles_id_fkey",
+        "e|fk|public.pins.pins_owner_id_profiles_id_fkey",
+        "n|con|public.pins.pins_owner_id_profiles_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.pins",
+        "n|sch|public",
+        "n|tbl|public.profiles",
+        "n|sch|public",
+        "n|col|public.pins.owner_id",
+        "n|col|public.profiles.id",
+        "e|uniqueness|public.profiles.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "pins"
+      ],
+      "writes": [
+        "s|fk|public.pins.pins_pid_projects_pid_fkey",
+        "n|fk|public.pins.pins_pid_projects_pid_fkey",
+        "e|fk|public.pins.pins_pid_projects_pid_fkey",
+        "n|con|public.pins.pins_pid_projects_pid_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.pins",
+        "n|sch|public",
+        "n|tbl|public.projects",
+        "n|sch|public",
+        "n|col|public.pins.pid",
+        "n|col|public.projects.pid",
+        "e|uniqueness|public.projects.pid"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "profiles"
+      ],
+      "writes": [
+        "s|fk|public.profiles.profiles_hod_id_profiles_id_fkey",
+        "n|fk|public.profiles.profiles_hod_id_profiles_id_fkey",
+        "e|fk|public.profiles.profiles_hod_id_profiles_id_fkey",
+        "n|con|public.profiles.profiles_hod_id_profiles_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.profiles",
+        "n|sch|public",
+        "n|tbl|public.profiles",
+        "n|sch|public",
+        "n|col|public.profiles.hod_id",
+        "n|col|public.profiles.id",
+        "e|uniqueness|public.profiles.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "projects"
+      ],
+      "writes": [
+        "s|fk|public.projects.projects_owner_id_profiles_id_fkey",
+        "n|fk|public.projects.projects_owner_id_profiles_id_fkey",
+        "e|fk|public.projects.projects_owner_id_profiles_id_fkey",
+        "n|con|public.projects.projects_owner_id_profiles_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.projects",
+        "n|sch|public",
+        "n|tbl|public.profiles",
+        "n|sch|public",
+        "n|col|public.projects.owner_id",
+        "n|col|public.profiles.id",
+        "e|uniqueness|public.profiles.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "remarks"
+      ],
+      "writes": [
+        "s|fk|public.remarks.remarks_pid_projects_pid_fkey",
+        "n|fk|public.remarks.remarks_pid_projects_pid_fkey",
+        "e|fk|public.remarks.remarks_pid_projects_pid_fkey",
+        "n|con|public.remarks.remarks_pid_projects_pid_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.remarks",
+        "n|sch|public",
+        "n|tbl|public.projects",
+        "n|sch|public",
+        "n|col|public.remarks.pid",
+        "n|col|public.projects.pid",
+        "e|uniqueness|public.projects.pid"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "remarks"
+      ],
+      "writes": [
+        "s|fk|public.remarks.remarks_author_id_profiles_id_fkey",
+        "n|fk|public.remarks.remarks_author_id_profiles_id_fkey",
+        "e|fk|public.remarks.remarks_author_id_profiles_id_fkey",
+        "n|con|public.remarks.remarks_author_id_profiles_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.remarks",
+        "n|sch|public",
+        "n|tbl|public.profiles",
+        "n|sch|public",
+        "n|col|public.remarks.author_id",
+        "n|col|public.profiles.id",
+        "e|uniqueness|public.profiles.id"
+      ]
+    }
+  ],
+  "ddl": [
+    {
+      "schema": "public",
+      "name": "notes",
+      "isRlsEnabled": true,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "pins",
+      "isRlsEnabled": true,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "profiles",
+      "isRlsEnabled": true,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "projects",
+      "isRlsEnabled": true,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "remarks",
+      "isRlsEnabled": true,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "user_role",
+      "values": [
+        "admin",
+        "hod",
+        "user"
+      ],
+      "entityType": "enums"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'N' || lpad(nextval('note_id_seq')::text, 3, '0')",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "owner_id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "auth.uid()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "cat",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'idea'",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "text",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "date",
+      "type": "date",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "current_date",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "converted",
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "false",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "proj_pid",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "pins",
+      "name": "owner_id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "auth.uid()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "pins",
+      "name": "pid",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "pins",
+      "name": "priority",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'high'",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "pins",
+      "name": "note",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "pins",
+      "name": "remind",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'weekly'",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "pins",
+      "name": "added_at",
+      "type": "date",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "current_date",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "email",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "full_name",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "role",
+      "type": "user_role",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'user'",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "hod_id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "updated_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "pid",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'CMC' || lpad(nextval('project_pid_seq')::text, 4, '0')",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "owner_id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "auth.uid()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "sr",
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "0",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "name",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "type",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "plant",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "sys",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "mod",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "phase",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "status",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'Open'",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "pct",
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "0",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "notes",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "quarter",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "updated_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "remarks",
+      "name": "id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "remarks",
+      "name": "pid",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "remarks",
+      "name": "author_id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "auth.uid()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "remarks",
+      "name": "text",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "remarks",
+      "name": "at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "notes_owner_id_idx",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "owner_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "notes_proj_pid_idx",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "proj_pid",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "pins",
+      "name": "pins_pid_idx",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "pid",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "profiles_hod_id_idx",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "hod_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "profiles_role_idx",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "role",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "projects_owner_id_idx",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "owner_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "projects_status_idx",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "status",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "projects_quarter_idx",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "quarter",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "remarks",
+      "name": "remarks_pid_idx",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "pid",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "remarks",
+      "name": "remarks_author_id_idx",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "author_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "notes_owner_id_profiles_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "owner_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "profiles",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "notes_proj_pid_projects_pid_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "proj_pid"
+      ],
+      "schemaTo": "public",
+      "tableTo": "projects",
+      "columnsTo": [
+        "pid"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "pins",
+      "name": "pins_owner_id_profiles_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "owner_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "profiles",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "pins",
+      "name": "pins_pid_projects_pid_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "pid"
+      ],
+      "schemaTo": "public",
+      "tableTo": "projects",
+      "columnsTo": [
+        "pid"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "profiles_hod_id_profiles_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "hod_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "profiles",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "projects_owner_id_profiles_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "owner_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "profiles",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "remarks",
+      "name": "remarks_pid_projects_pid_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "pid"
+      ],
+      "schemaTo": "public",
+      "tableTo": "projects",
+      "columnsTo": [
+        "pid"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "remarks",
+      "name": "remarks_author_id_profiles_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "author_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "profiles",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "pins",
+      "name": "pins_pkey",
+      "columns": [
+        "owner_id",
+        "pid"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "notes",
+      "name": "notes_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "profiles_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "projects_pkey",
+      "columns": [
+        "pid"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "remarks",
+      "name": "remarks_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "profiles_email_key",
+      "nameExplicit": false,
+      "columns": [
+        "email"
+      ],
+      "nullsNotDistinct": false,
+      "entityType": "uniques"
+    },
+    {
+      "schema": "public",
+      "table": "profiles",
+      "name": "profiles_hod_not_self",
+      "value": "\"hod_id\" is null or \"hod_id\" <> \"id\"",
+      "entityType": "checks"
+    },
+    {
+      "schema": "public",
+      "table": "projects",
+      "name": "projects_pct_range",
+      "value": "\"pct\" >= 0 and \"pct\" <= 100",
+      "entityType": "checks"
+    },
+    {
+      "schema": "public",
+      "name": "note_id_seq",
+      "incrementBy": "1",
+      "minValue": "1",
+      "maxValue": "9223372036854775807",
+      "startWith": "1",
+      "cacheSize": 1,
+      "cycle": false,
+      "entityType": "sequences"
+    },
+    {
+      "schema": "public",
+      "name": "project_pid_seq",
+      "incrementBy": "1",
+      "minValue": "1",
+      "maxValue": "9223372036854775807",
+      "startWith": "1",
+      "cacheSize": 1,
+      "cycle": false,
+      "entityType": "sequences"
+    }
+  ]
+}

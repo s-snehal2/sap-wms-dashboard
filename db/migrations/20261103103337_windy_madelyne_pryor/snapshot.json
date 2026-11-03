@@ -1,0 +1,81 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "2ac7bfcd-dd4d-4997-9818-4523903d0efd",
+  "prevIds": [
+    "2c912510-dd26-4e6c-9d15-01ce70cde488"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "profiles",
+        "emp_code"
+      ],
+      "writes": [
+        "s|col|public.profiles.emp_code",
+        "n|col|public.profiles.emp_code",
+        "e|col|public.profiles.emp_code"
+      ],
+      "reads": [
+        "n|tbl|public.profiles",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_unique",
+      "statementTarget": [
+        "table",
+        "public",
+        "profiles"
+      ],
+      "writes": [
+        "s|uq|public.profiles.profiles_emp_code_key",
+        "n|uq|public.profiles.profiles_emp_code_key",
+        "e|uq|public.profiles.profiles_emp_code_key",
+        "n|con|public.profiles.profiles_emp_code_key",
+        "n|rel|public.profiles_emp_code_key"
+      ],
+      "reads": [
+        "n|tbl|public.profiles",
+        "n|sch|public",
+        "n|col|public.profiles.emp_code"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "profiles",
+        "name": "emp_code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "profiles",
+        "name": "profiles_emp_code_key",
+        "nameExplicit": false,
+        "columns": [
+          "emp_code"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    }
+  ]
+}

@@ -16,7 +16,7 @@ The SAP/WMS Command Center is a single-page dashboard for tracking SAP / WMS
 projects, capturing notes and ideas, and pinning high-priority items for daily
 monitoring across two plants (AD & ND).
 
-- Five tabs: **Overview**, **All Projects**, **Analytics**, **Notes & Ideas**, **Pin Board**
+- Four tabs: **All Projects**, **Analytics**, **Pin Board**, **Notes & Ideas**
 - Project CRUD with conversions from notes
 - KPI strip + quarter-wise filtering
 - Excel import and 3-sheet export (SheetJS, loaded on demand)
@@ -56,7 +56,6 @@ app/
 components/
   Dashboard.tsx         Top-level state: projects, notes, pins, filters, theme, modals, toasts
   KpiStrip.tsx          Clickable KPI cards (Total / WIP / Done / Parked / Avg)
-  OverviewView.tsx      Active projects, status ring, avg-by-type, quarter summary, all-projects list
   ProjectsView.tsx      Sortable/filterable project table (shadcn Table)
   AnalyticsView.tsx     Chart.js donut + top-12 bar + parked list
   NotesView.tsx         Note composer, category filter pills, note grid

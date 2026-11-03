@@ -27,7 +27,7 @@ app/
   globals.css       Tailwind v4 entry + shadcn design tokens (palette mapped 1:1)
 components/
   Dashboard.tsx     all state: projects, notes, pins, filters, theme, modals, toasts
-  KpiStrip.tsx  OverviewView.tsx  ProjectsView.tsx  AnalyticsView.tsx
+  KpiStrip.tsx  ProjectsView.tsx  AnalyticsView.tsx
   NotesView.tsx  PinBoardView.tsx  QuarterSummary.tsx  NoteCard.tsx  NoteComposer.tsx
   ui.tsx            shared kit: PinMark (🔨), ProjectRow, Bar, StatusRing, badges, row actions, fields
   ui/               shadcn/ui primitives (button, badge, dialog, alert-dialog, input, textarea,

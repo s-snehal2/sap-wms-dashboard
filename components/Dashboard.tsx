@@ -2,21 +2,24 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
-import { Download, LayoutGrid, Moon, PictureInPicture2, Plus, Search, Sun, Upload, X } from "lucide-react";
-import { LS_NOTES, LS_PINS, LS_PROJECTS, LS_REMARKS, LS_TAB, PIN_EMOJI, QUARTER_LABELS } from "@/lib/constants";
+import { Download, LayoutGrid, Loader2, Moon, PictureInPicture2, Plus, Search, Sun, Upload, X } from "lucide-react";
+import { reserveId } from "@/app/actions/data";
+import { LS_NOTES, LS_PROJECTS, LS_TAB, PIN_EMOJI, QUARTER_LABELS } from "@/lib/constants";
 import { exportWorkbook, parseProjectsFile } from "@/lib/excel";
 import { SEED_NOTES, SEED_PROJECTS } from "@/lib/seed";
-import type { Note, NoteCat, Pin as PinType, Priority, Project, Quarter, Remark, TabId } from "@/lib/types";
+import type { Me, Note, NoteCat, Pin as PinType, Priority, Project, Quarter, TabId } from "@/lib/types";
+import { NOTES, PINS, PROJECTS, REMARKS } from "@/lib/tables";
+
+import UserMenu from "./UserMenu";
 import { usePersistentState } from "@/lib/usePersistentState";
 import { usePinReminders } from "@/lib/usePinReminders";
-import { cn, formatPid, maxIdNum, prefillName, qOf, today } from "@/lib/utils";
+
 
 import AnalyticsView from "./AnalyticsView";
 import FloatingPins from "./desktop/FloatingPins";
 import { useFloatingWindow } from "./desktop/useFloatingWindow";
 import KpiStrip from "./KpiStrip";
 import NotesView from "./NotesView";
-// import OverviewView from "./OverviewView";
 import PinBoardView from "./PinBoardView";
 import ProjectsView from "./ProjectsView";
 import { Button } from "./ui/button";
@@ -27,6 +30,8 @@ import ConfirmDeleteModal from "./modals/ConfirmDeleteModal";
 import NoteEditModal from "./modals/NoteEditModal";
 import PinModal from "./modals/PinModal";
 import ProjectModal, { ProjectDraft } from "./modals/ProjectModal";
+import { cn, prefillName, qOf, today } from "@/lib/utils";
+import { useDbTable } from "@/lib/usedbtable";
 
 type ModalState =
   | { kind: "project"; pid?: string }
@@ -46,15 +51,24 @@ const TABS: { id: TabId; label: string }[] = [
 
 ];
 
-const isProjectList = (v: unknown) => Array.isArray(v) && v.every((p) => p && typeof p.pid === "string" && typeof p.name === "string");
-const isPinList = (v: unknown) => Array.isArray(v) && v.every((p) => p && typeof p.pid === "string");
+/** Data this browser stored before the database switch (offered as a one-time import). */
+const readLocal = <T,>(key: string): T[] => {
+  try {
+    const v = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(v) ? v : [];
+  } catch {
+    return [];
+  }
+};
 
-export default function Dashboard() {
-  const [projects, setProjects] = usePersistentState<Project[]>(LS_PROJECTS, SEED_PROJECTS, isProjectList);
-  const [notes, setNotes] = usePersistentState<Note[]>(LS_NOTES, SEED_NOTES, (v) => Array.isArray(v) && v.length > 0);
-  const [pinsRaw, setPins] = usePersistentState<PinType[]>(LS_PINS, [], isPinList);
-  const [tab, setTab] = usePersistentState<TabId>(LS_TAB, "overview", (v) => TABS.some((t) => t.id === v));
-  const [remarks, setRemarks] = usePersistentState<Remark[]>(LS_REMARKS, [], Array.isArray);
+export default function Dashboard({ me }: { me: Me }) {
+  // Saved in the database (through app/actions/data.ts), shared according to your role.
+  const [projects, setProjects, projectsState] = useDbTable(PROJECTS);
+  const [notes, setNotes] = useDbTable(NOTES);
+  const [pinsRaw, setPins] = useDbTable(PINS);
+  const [remarks, setRemarks] = useDbTable(REMARKS);
+  // Personal preferences stay in this browser.
+  const [tab, setTab] = usePersistentState<TabId>(LS_TAB, "projects", (v) => TABS.some((t) => t.id === v));
   const [remindersOn, setRemindersOn] = usePersistentState<boolean>("sap_wms_notify_v1", false, (v) => typeof v === "boolean");
 
   const [search, setSearch] = useState("");
@@ -70,13 +84,14 @@ export default function Dashboard() {
   const searchRef = useRef<HTMLInputElement>(null);
   const floating = useFloatingWindow();
 
-  // Never reuse a project ID, even after deletes.
-  const pidCounter = useRef(SEED_PROJECTS.length + 1);
-  const nextPid = () => {
-    const n = Math.max(pidCounter.current, maxIdNum(projects.map((p) => p.pid)) + 1);
-    pidCounter.current = n + 1;
-    return formatPid(n);
+  /** A new ID from the database — unique across all users. */
+  const newId = async (kind: "project" | "note") => {
+    const r = await reserveId(kind);
+    if (!r.ok) toast.error(r.error);
+    return r.ok ? r.data : null;
   };
+  const mine = { ownerId: me.id, ownerName: me.fullName, editable: true };
+  const seesOthers = me.role !== "user";
 
   useEffect(() => setMounted(true), []);
   const closeModal = useCallback(() => setModal(null), []);
@@ -105,13 +120,14 @@ export default function Dashboard() {
   }, [projects, search, kpiFilter, quarterFilter, projFilter, pinnedSet]);
 
   /* ── projects ── */
-  const saveProject = (draft: ProjectDraft, editPid?: string) => {
+  const saveProject = async (draft: ProjectDraft, editPid?: string) => {
     if (editPid) {
-      setProjects((ps) => ps.map((p) => (p.pid === editPid ? { ...draft, pid: editPid } : p)));
+      setProjects((ps) => ps.map((p) => (p.pid === editPid ? { ...p, ...draft, pid: editPid } : p)));
       toast.info(`${editPid} updated`);
     } else {
-      const pid = nextPid();
-      setProjects((ps) => [...ps, { ...draft, pid }]);
+      const pid = await newId("project");
+      if (!pid) return;
+      setProjects((ps) => [...ps, { ...draft, pid, ...mine }]);
       toast.success(`${pid} created`, { action: { label: `${PIN_EMOJI} Pin it`, onClick: () => pinNow(pid) } });
     }
     closeModal();
@@ -139,16 +155,27 @@ export default function Dashboard() {
     });
   };
 
-  const resetProjects = () => {
-    const before = projects;
-    setProjects(SEED_PROJECTS);
-    toast.info("Projects reset to sample data", { action: { label: "Undo", onClick: () => setProjects(before) } });
+  /* ── empty list: start from sample data or import what this browser stored before ── */
+  const [hasLocal, setHasLocal] = useState(false);
+  useEffect(() => setHasLocal(readLocal(LS_PROJECTS).length > 0), []);
+  const loadSamples = () => {
+    // Sample IDs that already belong to someone else are given new numbers by the database.
+    setProjects(SEED_PROJECTS.map((p) => ({ ...p, ...mine })));
+    if (!notes.length) setNotes(SEED_NOTES.map((n) => ({ ...n, ...mine })));
+    toast.success(`Loaded ${SEED_PROJECTS.length} sample projects`);
+  };
+  const importLocal = () => {
+    const seen = new Set<string>();
+    const ps = readLocal<Project>(LS_PROJECTS).filter((p) => p?.pid && !seen.has(p.pid) && seen.add(p.pid));
+    setProjects((cur) => [...cur.filter((c) => !seen.has(c.pid)), ...ps.map((p) => ({ ...p, ...mine }))]);
+    if (!notes.length) setNotes(readLocal<Note>(LS_NOTES).map((n) => ({ ...n, projPid: null, ...mine })));
+    toast.success(`Imported ${ps.length} projects from this browser`, { description: "Pins and remarks: re-add them on the imported projects." });
   };
 
   /* ── remarks ── */
   const addRemark = (pid: string, text: string) => {
     const at = new Date().toISOString();
-    setRemarks((rs) => [...rs, { id: `R${Date.now()}${Math.random().toString(36).slice(2, 6)}`, pid, text, at }]);
+    setRemarks((rs) => [...rs, { id: crypto.randomUUID(), pid, text, at, author: me.fullName, authorId: me.id }]);
     toast.success(`Remark added to ${pid}`);
   };
   const deleteRemark = (id: string) => {
@@ -169,8 +196,12 @@ export default function Dashboard() {
       toast.error("Type a note first");
       return false;
     }
-    setNotes((ns) => [...ns, { id: `N${String(maxIdNum(ns.map((n) => n.id)) + 1).padStart(3, "0")}`, cat, text, date: today(), converted: false, projPid: null }]);
-    toast.success("Note added");
+    void (async () => {
+      const id = await newId("note");
+      if (!id) return;
+      setNotes((ns) => [...ns, { id, cat, text, date: today(), converted: false, projPid: null, ...mine }]);
+      toast.success("Note added");
+    })();
     return true;
   };
 
@@ -189,9 +220,10 @@ export default function Dashboard() {
     toast.error("Note removed", { action: { label: "Undo", onClick: () => setNotes((ns) => [...ns.slice(0, idx), note, ...ns.slice(idx)]) } });
   };
 
-  const saveConverted = (noteId: string, draft: ProjectDraft) => {
-    const pid = nextPid();
-    setProjects((ps) => [...ps, { ...draft, pid }]);
+  const saveConverted = async (noteId: string, draft: ProjectDraft) => {
+    const pid = await newId("project");
+    if (!pid) return;
+    setProjects((ps) => [...ps, { ...draft, pid, ...mine }]);
     setNotes((ns) => ns.map((n) => (n.id === noteId ? { ...n, converted: true, projPid: pid } : n)));
     closeModal();
     toast.success(`${pid} created from note`);
@@ -258,11 +290,21 @@ export default function Dashboard() {
       const { projects: rows, duplicates } = await parseProjectsFile(file);
       if (!rows.length) return void toast.error("No projects found in the first sheet");
       const before = projects;
-      setProjects(rows);
-      pidCounter.current = maxIdNum(rows.map((p) => p.pid)) + 1;
+      // Merge: update projects you own, add new ones. Nobody else's projects are removed.
+      const byPid = new Map(projects.map((p) => [p.pid, p]));
+      const incoming: Project[] = [];
+      for (const r of rows) {
+        const cur = byPid.get(r.pid);
+        if (cur && cur.editable === false) {
+          const pid = await newId("project"); // that ID is a team member's project → give this row a new one
+          if (pid) incoming.push({ ...r, pid, ...mine });
+        } else incoming.push(cur ? { ...cur, ...r } : { ...r, ...mine });
+      }
+      const inc = new Set(incoming.map((p) => p.pid));
+      setProjects([...projects.filter((p) => !inc.has(p.pid)), ...incoming]);
       setKpiFilter(null);
       setQuarterFilter(null);
-      toast.success(`Loaded ${rows.length} projects from ${file.name}`, {
+      toast.success(`Imported ${rows.length} projects from ${file.name}`, {
         description: duplicates ? `${duplicates} duplicate row${duplicates > 1 ? "s" : ""} skipped` : undefined,
         action: { label: "Undo", onClick: () => setProjects(before) },
       });
@@ -395,7 +437,7 @@ export default function Dashboard() {
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
-                if (tab !== "overview" && tab !== "projects") setTab("projects");
+                if (tab !== "projects") setTab("projects");
               }}
               onKeyDown={(e) => e.key === "Escape" && (setSearch(""), e.currentTarget.blur())}
               aria-label="Search projects"
@@ -431,6 +473,7 @@ export default function Dashboard() {
           <Button variant="outline" size="icon" className="size-8" onClick={() => setTheme(isDark ? "light" : "dark")} title="Toggle theme" aria-label="Toggle theme">
             {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </Button>
+          <UserMenu me={me} />
         </div>
       </div>
 
@@ -459,7 +502,32 @@ export default function Dashboard() {
         </TabsList>
 
         <div className="flex-1 overflow-y-auto px-6 py-5">
-          {chips.length > 0 && (tab === "overview" || tab === "projects") && (
+          {projectsState.loading && (
+            <div className="flex items-center gap-2 text-[12px] text-fg3 mb-4">
+              <Loader2 className="size-3.5 animate-spin" /> Loading projects…
+            </div>
+          )}
+          {!projectsState.loading && projects.length === 0 && tab === "projects" && (
+            <div className="mb-5 rounded-lg border border-dashed border-primary/50 bg-accent/50 px-5 py-4">
+              <div className="text-[14px] font-semibold mb-1">No projects yet</div>
+              <p className="text-[12px] text-fg2 mb-3">Projects you add are saved in the database{seesOthers ? " and visible to you, your HOD and admins" : " — your HOD and admins can see them too"}. Start one of these ways:</p>
+              <div className="flex flex-wrap gap-2">
+                {hasLocal && (
+                  <Button size="sm" onClick={importLocal}>
+                    Import my data from this browser
+                  </Button>
+                )}
+                <Button size="sm" variant="outline" onClick={loadSamples}>
+                  Load the {SEED_PROJECTS.length} sample projects
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setModal({ kind: "project" })}>
+                  <Plus className="size-3.5" /> Add a project
+                </Button>
+              </div>
+              <p className="text-[11px] text-fg3 mt-2">You can also use Upload in the header to import an Excel file.</p>
+            </div>
+          )}
+          {chips.length > 0 && tab === "projects" && (
             <div className="flex items-center gap-1.5 flex-wrap mb-4 text-[11px] animate-in fade-in slide-in-from-top-1 duration-200">
               <span className="text-fg3">
                 Showing {filtered.length} of {projects.length} · filtered by
@@ -476,32 +544,12 @@ export default function Dashboard() {
               )}
             </div>
           )}
-{/*
-          <TabsContent value="overview">
-            <OverviewView
-              projects={projects}
-              filtered={filtered}
-              notes={notes}
-              quarterFilter={quarterFilter}
-              onQuarterFilter={setQuarterFilter}
-              onAddNote={addNote}
-              onViewAllNotes={() => setTab("notes")}
-              onEditNote={openNote}
-              onConvertNote={(noteId) => setModal({ kind: "convert", noteId })}
-              onDeleteNote={deleteNote}
-              statusFilter={kpiFilter}
-              onStatusFilter={setKpiFilter}
-              typeFilter={projFilter}
-              onTypeFilter={setProjFilter}
-              {...rowHandlers}
-            />
-          </TabsContent>*/}
           <TabsContent value="projects">
             <ProjectsView
               projects={filtered}
               filter={projFilter}
               onFilter={setProjFilter}
-              onReset={resetProjects}
+              showOwner={seesOthers}
               remarks={remarks}
               onAddRemark={addRemark}
               onDeleteRemark={deleteRemark}

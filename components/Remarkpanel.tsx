@@ -65,7 +65,10 @@ export default function RemarksPanel({ pid, remarks, onAdd, onDelete, onClose }:
             <li key={r.id} className="group flex items-start gap-2 bg-card border rounded-md px-2.5 py-2 animate-in fade-in duration-200">
               <div className="flex-1 min-w-0">
                 <div className="text-xs text-foreground whitespace-pre-wrap break-words">{r.text}</div>
-                <div className="text-[10px] text-fg3 mt-0.5">{formatDateTime(r.at)}</div>
+                <div className="text-[10px] text-fg3 mt-0.5">
+                  {r.author && <span className="font-medium text-fg2">{r.author} · </span>}
+                  {formatDateTime(r.at)}
+                </div>
               </div>
               <button
                 className="opacity-0 group-hover:opacity-100 focus:opacity-100 text-fg3 hover:text-status-danger-txt transition-opacity"
