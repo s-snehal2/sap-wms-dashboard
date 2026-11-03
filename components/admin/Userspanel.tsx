@@ -104,7 +104,7 @@ export default function UsersPanel({ me }: { me: Me }) {
       return false;
     }
     toast.success(msg);
-    await load();
+    void load(); // refresh the list in the background — the button is free straight away
     return true;
   };
 

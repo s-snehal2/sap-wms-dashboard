@@ -24,13 +24,21 @@ function fail(e: unknown): { ok: false; error: string } {
   // Messages raised by the database rules (db/sql/0001_auth_helpers.sql) are written for people — pass them on.
   for (let err = e as { code?: string; message?: string; cause?: unknown } | undefined, i = 0; err && i < 5; err = err.cause as typeof err, i++) {
     if (err.code === "P0001" && err.message) return { ok: false, error: err.message };
+    if (err.code === "42703" || err.code === "42P01")
+      return { ok: false, error: "The database isn't up to date (missing column/table). Run:  pnpm db:migrate  then restart pnpm dev." };
+    if (err.code === "28P01") return { ok: false, error: "Database password in DATABASE_URL is wrong (.env)." };
     if (err.code === "23505") {
       const c = String((err as { constraint_name?: string }).constraint_name ?? err.message ?? "");
       return { ok: false, error: c.includes("emp_code") ? "That employee code is already used by someone else" : "A user with that email already exists" };
     }
   }
+  const msg = e instanceof Error ? e.message : String(e);
+  if (/timed out|timeout|aborted/i.test(msg)) return { ok: false, error: "Supabase didn't answer within 20 seconds — check your internet / office network, then try again." };
+  if (/invalid api key|jwt|unauthorized|invalid.*key|not allowed|not_admin|forbidden/i.test(msg))
+    return { ok: false, error: "SUPABASE_SECRET_KEY looks wrong — copy the *secret* (service_role) key again into .env.local and restart pnpm dev." };
+  if (/fetch failed|ENOTFOUND|ECONNREFUSED|ECONNRESET/i.test(msg)) return { ok: false, error: "The server can't reach Supabase (" + msg + ") — check NEXT_PUBLIC_SUPABASE_URL and your network." };
   console.error(e);
-  return { ok: false, error: "Something went wrong — please try again" };
+  return { ok: false, error: "Something went wrong: " + msg.slice(0, 200) };
 }
 
 const cleanEmail = (v: unknown) => String(v ?? "").trim().toLowerCase();
@@ -119,16 +127,18 @@ export async function createUser(input: { email: string; password: string; fullN
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new AccessError("Enter a valid email address");
     const fullName = cleanName(input.fullName);
     if (!fullName) throw new AccessError("Enter the person's name");
-    const empCode = await checkEmpCode(input.empCode);
     const password = checkPassword(input.password);
     const role = checkRole(input.role);
-    const hodId = await checkHod(role, input.hodId);
+    // Independent checks run at the same time (fewer round trips to the database).
+    const [empCode, hodId] = await Promise.all([checkEmpCode(input.empCode), checkHod(role, input.hodId)]);
 
     const { data, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { full_name: fullName } });
     if (error || !data.user) {
       const m = (error?.message ?? "").toLowerCase();
       if (m.includes("already") && m.includes("registered")) throw new AccessError("A user with that email already exists");
       if (m.includes("database error")) throw new AccessError("The database refused this email — it must use your company domain (see db/sql/0001_auth_helpers.sql)");
+      if (error && /invalid api key|jwt|not authorized|unauthorized|bad_jwt|not allowed|not_admin|forbidden/i.test(error.message))
+        throw new AccessError("SUPABASE_SECRET_KEY looks wrong — copy the *secret* (service_role) key again into .env.local and restart pnpm dev.");
       throw new AccessError(error?.message ?? "Could not create the user");
     }
     createdId = data.user.id;
