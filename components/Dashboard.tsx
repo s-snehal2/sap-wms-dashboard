@@ -1,19 +1,21 @@
 "use client";
+"use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
-import { Download, LayoutGrid, Loader2, Moon, PictureInPicture2, Plus, Search, Sun, Upload, X } from "lucide-react";
+import Link from "next/link";
+import { Download, LayoutGrid, Loader2, Moon, PictureInPicture2, Plus, Search, Sun, Upload, Users, X } from "lucide-react";
 import { reserveId } from "@/app/actions/data";
 import { LS_NOTES, LS_PROJECTS, LS_TAB, PIN_EMOJI, QUARTER_LABELS } from "@/lib/constants";
 import { exportWorkbook, parseProjectsFile } from "@/lib/excel";
 import { SEED_NOTES, SEED_PROJECTS } from "@/lib/seed";
 import type { Me, Note, NoteCat, Pin as PinType, Priority, Project, Quarter, TabId } from "@/lib/types";
 import { NOTES, PINS, PROJECTS, REMARKS } from "@/lib/tables";
-
+import { useDbSync, useDbTable } from "@/lib/useDbTable";
+import type { AllData } from "@/lib/server/load";
 import UserMenu from "./UserMenu";
 import { usePersistentState } from "@/lib/usePersistentState";
 import { usePinReminders } from "@/lib/usePinReminders";
-
 
 import AnalyticsView from "./AnalyticsView";
 import FloatingPins from "./desktop/FloatingPins";
@@ -31,7 +33,6 @@ import NoteEditModal from "./modals/NoteEditModal";
 import PinModal from "./modals/PinModal";
 import ProjectModal, { ProjectDraft } from "./modals/ProjectModal";
 import { cn, prefillName, qOf, today } from "@/lib/utils";
-import { useDbTable } from "@/lib/usedbtable";
 
 type ModalState =
   | { kind: "project"; pid?: string }
@@ -61,12 +62,17 @@ const readLocal = <T,>(key: string): T[] => {
   }
 };
 
-export default function Dashboard({ me }: { me: Me }) {
+export default function Dashboard({ me, initial }: { me: Me; initial: AllData }) {
   // Saved in the database (through app/actions/data.ts), shared according to your role.
-  const [projects, setProjects, projectsState] = useDbTable(PROJECTS);
-  const [notes, setNotes] = useDbTable(NOTES);
-  const [pinsRaw, setPins] = useDbTable(PINS);
-  const [remarks, setRemarks] = useDbTable(REMARKS);
+  // The page arrives already filled (`initial`); one shared request refreshes all lists.
+  const reloadRef = useRef<() => void>(() => {});
+  const requestReload = useCallback(() => reloadRef.current(), []);
+  const [projects, setProjects, projectsCtl] = useDbTable(PROJECTS, initial.projects, requestReload);
+  const [notes, setNotes, notesCtl] = useDbTable(NOTES, initial.notes, requestReload);
+  const [pinsRaw, setPins, pinsCtl] = useDbTable(PINS, initial.pins, requestReload);
+  const [remarks, setRemarks, remarksCtl] = useDbTable(REMARKS, initial.remarks, requestReload);
+  reloadRef.current = useDbSync({ projects: projectsCtl, notes: notesCtl, pins: pinsCtl, remarks: remarksCtl });
+  const projectsState = { loading: false };
   // Personal preferences stay in this browser.
   const [tab, setTab] = usePersistentState<TabId>(LS_TAB, "projects", (v) => TABS.some((t) => t.id === v));
   const [remindersOn, setRemindersOn] = usePersistentState<boolean>("sap_wms_notify_v1", false, (v) => typeof v === "boolean");
@@ -86,9 +92,14 @@ export default function Dashboard({ me }: { me: Me }) {
 
   /** A new ID from the database — unique across all users. */
   const newId = async (kind: "project" | "note") => {
-    const r = await reserveId(kind);
-    if (!r.ok) toast.error(r.error);
-    return r.ok ? r.data : null;
+    try {
+      const r = await reserveId(kind);
+      if (!r.ok) toast.error(r.error);
+      return r.ok ? r.data : null;
+    } catch {
+      toast.error("Can't reach the server — please try again in a moment");
+      return null;
+    }
   };
   const mine = { ownerId: me.id, ownerName: me.fullName, editable: true };
   const seesOthers = me.role !== "user";
@@ -473,6 +484,15 @@ export default function Dashboard({ me }: { me: Me }) {
           <Button variant="outline" size="icon" className="size-8" onClick={() => setTheme(isDark ? "light" : "dark")} title="Toggle theme" aria-label="Toggle theme">
             {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </Button>
+          {me.role === "admin" && (
+            <Link
+              href="/admin/users"
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md border border-border-strong bg-bg2 text-xs text-fg2 transition-colors hover:border-primary hover:text-accent-foreground hover:bg-accent"
+              title="See and manage everyone who has an account"
+            >
+              <Users className="size-3.5" /> Users
+            </Link>
+          )}
           <UserMenu me={me} />
         </div>
       </div>

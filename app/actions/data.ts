@@ -1,10 +1,11 @@
 "use server";
-import { and, asc, eq, inArray, sql, type SQL } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 
 import { getConn, getDb, schema } from "@/db";
 import { canDeleteRemark, canEditOwner, canSeeOwner, visibleOwnerIds } from "@/lib/server/access";
 import { AccessError, requireMe } from "@/lib/server/auth";
 import { cleanNote, cleanPin, cleanProject, isUuid, str } from "@/lib/server/clean";
+import { loadAllFor, type AllData } from "@/lib/server/load";
 import type { Note, Pin, Project, Remark } from "@/lib/types";
 
 /*
@@ -24,64 +25,11 @@ const fail = (e: unknown): { ok: false; error: string } => {
   return { ok: false, error: "Something went wrong with the database — please try again" };
 };
 
-const ownerFilter = (col: Parameters<typeof inArray>[0], visible: string[] | "all"): SQL | undefined =>
-  visible === "all" ? undefined : inArray(col, visible);
-
-/** Load one list. You get exactly the rows your role allows. */
-export async function loadRows(table: TableName): Promise<Result<Item[]>> {
+/** Load every list in one request (used by the 20-second refresh). */
+export async function loadAll(): Promise<Result<AllData>> {
   try {
     const me = await requireMe();
-    const visible = await visibleOwnerIds(me);
-    const db = getDb();
-    const ownerName = sql<string>`coalesce(${profiles.fullName}, ${profiles.email})`;
-
-    if (table === "projects") {
-      const rows = await db
-        .select({ p: projects, ownerName })
-        .from(projects)
-        .leftJoin(profiles, eq(profiles.id, projects.ownerId))
-        .where(ownerFilter(projects.ownerId, visible))
-        .orderBy(asc(projects.sr), asc(projects.pid));
-      return {
-        ok: true,
-        data: rows.map(({ p, ownerName }) => ({
-          pid: p.pid, sr: p.sr, name: p.name, type: p.type, plant: p.plant, sys: p.sys, mod: p.mod,
-          phase: p.phase, status: p.status, pct: p.pct, notes: p.notes, quarter: p.quarter,
-          ownerId: p.ownerId, ownerName: ownerName ?? "", editable: canEditOwner(me, p.ownerId),
-        })),
-      };
-    }
-    if (table === "notes") {
-      const rows = await db
-        .select({ n: notes, ownerName })
-        .from(notes)
-        .leftJoin(profiles, eq(profiles.id, notes.ownerId))
-        .where(ownerFilter(notes.ownerId, visible))
-        .orderBy(asc(notes.createdAt), asc(notes.id));
-      return {
-        ok: true,
-        data: rows.map(({ n, ownerName }) => ({
-          id: n.id, cat: n.cat as Note["cat"], text: n.text, date: n.date, converted: n.converted, projPid: n.projPid,
-          ownerId: n.ownerId, ownerName: ownerName ?? "", editable: canEditOwner(me, n.ownerId),
-        })),
-      };
-    }
-    if (table === "pins") {
-      const rows = await db.select().from(pins).where(eq(pins.ownerId, me.id));
-      return { ok: true, data: rows.map((p) => ({ pid: p.pid, priority: p.priority as Pin["priority"], note: p.note, remind: p.remind, addedAt: p.addedAt })) };
-    }
-    // remarks on projects I can see
-    const rows = await db
-      .select({ r: remarks, author: sql<string>`coalesce(${profiles.fullName}, ${profiles.email})` })
-      .from(remarks)
-      .innerJoin(projects, eq(projects.pid, remarks.pid))
-      .leftJoin(profiles, eq(profiles.id, remarks.authorId))
-      .where(ownerFilter(projects.ownerId, visible))
-      .orderBy(asc(remarks.at));
-    return {
-      ok: true,
-      data: rows.map(({ r, author }) => ({ id: r.id, pid: r.pid, text: r.text, at: new Date(r.at).toISOString(), author: author ?? undefined, authorId: r.authorId })),
-    };
+    return { ok: true, data: await loadAllFor(me) };
   } catch (e) {
     return fail(e);
   }

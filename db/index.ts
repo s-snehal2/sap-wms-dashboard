@@ -14,7 +14,7 @@ const ssl = process.env.DATABASE_SSL === "false" ? false : ("require" as const);
 function createDb() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_URL is not set — add it to .env (see .env.example)");
-  const sql = postgres(connectionString, { max: 1, prepare: false, ssl });
+  const sql = postgres(connectionString, { max: 4, prepare: false, ssl, idle_timeout: 20 });
   return { sql, db: drizzle({ client: sql, relations }) };
 }
 
