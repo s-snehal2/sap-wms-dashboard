@@ -35,7 +35,7 @@ export default function AddPinModal({
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-   <DialogContent className="flex flex-col w-[calc(100%-2rem)] sm:max-w-[560px] max-h-[85dvh] overflow-hidden">
+   <DialogContent className="flex flex-col w-[calc(100%-2rem)] max-h-[90dvh] overflow-hidden">
 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -62,10 +62,10 @@ export default function AddPinModal({
           />
         </div>
 
-        {/* Project List */}
-        <ScrollArea className="h-[320px] max-h-[45vh] w-full min-w-0">
-          <div className="flex flex-col gap-2">
 
+        {/* Project List */}
+        <ScrollArea className="h-[320px] max-h-[45vh] w-full min-w-0 overflow-hidden &_[data-radix-scroll-area-viewport]>div:!block">
+          <div className="flex w-full min-w-0 flex-col gap-2 ">
             {shown.map((p) => {
               const pinned = isPinned(p.pid);
 
@@ -74,7 +74,7 @@ export default function AddPinModal({
                   key={p.pid}
                   onClick={() => !pinned && onPick(p.pid)}
                   className={cn(
-                    "flex w-full box-border items-center gap-0 rounded-md border p-2 min-w-0",
+                    "flex w-full min-w-0 box-border items-start gap-2 rounded-md border p-3",
                     pinned
                       ? "bg-amber-50/50 opacity-70 dark:bg-amber-500/5"
                       : "cursor-pointer hover:bg-accent hover:border-primary"
@@ -83,25 +83,22 @@ export default function AddPinModal({
                   <Checkbox
                     checked={pinned}
                     disabled={pinned}
-                    className="shrink-0"
+                    className="shrink-0 mt-0.5"
                   />
 
                   {/* Project Details */}
-                  <div className="flex-1 min-w-0  pl-2 overflow-hidden">
-                    <p
-                      className="w-full text-xs font-normal truncate"
-                      title={p.name}
-                    >
+                  <div className="flex-1 min-w-0 pl-1">
+                    <p className="text-xs font-medium whitespace-normal break-words">
                       {p.name}
                     </p>
 
-                    <p className="w-full text-[10px] text-fg3 mt-1 truncate">
+                    <p className="text-[10px] text-fg3 mt-1 whitespace-normal break-words">
                       {p.pid} · {p.type} · {p.plant} · {p.status}
                     </p>
                   </div>
 
                   {/* Status */}
-              <div className="mr-4 shrink-0 whitespace-nowrap">
+                  <div className="shrink-0 whitespace-nowrap">
                     {pinned ? (
                       <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-300">
                         Pinned
@@ -119,7 +116,6 @@ export default function AddPinModal({
                 No projects match.
               </p>
             )}
-
           </div>
         </ScrollArea>
 
