@@ -75,12 +75,19 @@ export const PRIORITIES: { value: Priority; label: string }[] = [
 export const PRIORITY_ORDER: Record<Priority, number> = { critical: 0, high: 1, medium: 2, low: 3 };
 
 export const REMIND_OPTIONS = [
+  { value: "30m", label: "Every 30 minutes" },
+  { value: "1h", label: "Every hour" },
   { value: "daily", label: "Daily" },
   { value: "weekly", label: "Weekly" },
-  { value: "always", label: "Always visible" },
+  { value: "always", label: "Always visible (no pop-ups)" },
 ];
+/** Allowed remind values (the server rejects anything else). */
+export const REMIND_VALUES = ["30m", "1h", "daily", "weekly", "always"] as const;
+/** Short label for cards: "every 30 min", "hourly", … */
+export const remindLabel = (v: string) =>
+  ({ "30m": "every 30 min", "1h": "hourly", daily: "daily", weekly: "weekly", always: "always visible" })[v] ?? "weekly";
 /** Milliseconds between desktop reminders for each interval ("always" = shown in the floating window, no popups). */
-export const REMIND_MS: Record<string, number> = { daily: 24 * 3600e3, weekly: 7 * 24 * 3600e3 };
+export const REMIND_MS: Record<string, number> = { "30m": 30 * 60e3, "1h": 3600e3, daily: 24 * 3600e3, weekly: 7 * 24 * 3600e3 };
 
 export const PRIORITY_BADGE_CLASS: Record<Priority, string> = {
   critical: "bg-[#FCEBEB] text-[#A32D2D] dark:bg-[#2a0a0a] dark:text-[#f87171]",

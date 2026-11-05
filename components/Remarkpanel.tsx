@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CornerDownLeft, MessageSquare, X } from "lucide-react";
 import type { Remark } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 /** e.g. "30 Oct 2026, 2:45 pm" */
 export const formatDateTime = (iso: string) =>
@@ -61,10 +62,17 @@ export default function RemarksPanel({ pid, remarks, onAdd, onDelete, onClose }:
 
       {sorted.length ? (
         <ul className="flex flex-col gap-1.5 max-h-[220px] overflow-y-auto">
-          {sorted.map((r) => (
-            <li key={r.id} className="group flex items-start gap-2 bg-card border rounded-md px-2.5 py-2 animate-in fade-in duration-200">
+          {sorted.map((r, i) => (
+            <li
+              key={r.id}
+              className={cn(
+                "group flex items-start gap-2 border rounded-md px-2.5 py-2 animate-in fade-in duration-200",
+                i === 0 ? "bg-accent/70 border-primary/50" : "bg-card"
+              )}
+            >
               <div className="flex-1 min-w-0">
-                <div className="text-xs text-foreground whitespace-pre-wrap break-words">{r.text}</div>
+                {i === 0 && <div className="text-[9px] font-bold uppercase tracking-[.08em] text-primary mb-0.5">Latest</div>}
+                <div className={cn("text-xs whitespace-pre-wrap break-words", i === 0 ? "text-primary font-medium" : "text-foreground")}>{r.text}</div>
                 <div className="text-[10px] text-fg3 mt-0.5">
                   {r.author && <span className="font-medium text-fg2">{r.author} · </span>}
                   {formatDateTime(r.at)}

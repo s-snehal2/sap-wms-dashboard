@@ -1,3 +1,4 @@
+import { REMIND_VALUES } from "@/lib/constants";
 import type { NoteCat, Priority } from "@/lib/types";
 
 /** Clean values coming from the browser before they reach the database. */
@@ -34,6 +35,6 @@ export const cleanNote = (n: Record<string, unknown>) => ({
 export const cleanPin = (p: Record<string, unknown>) => ({
   priority: oneOf(p.priority, PRIORITIES, "high"),
   note: str(p.note, 1000),
-  remind: oneOf(p.remind, ["daily", "weekly", "always"] as const, "weekly"),
+  remind: oneOf(p.remind, REMIND_VALUES, "weekly"),
   addedAt: isoDate(p.addedAt),
 });

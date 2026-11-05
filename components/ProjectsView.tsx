@@ -31,8 +31,8 @@ const COLS: { key: SortCol | null; label: string; width?: number }[] = [
   { key: "sys", label: "System", width: 60 },
   { key: "quarter", label: "Quarter", width: 62 },
   { key: "pct", label: "Progress", width: 130 },
-  { key: null, label: "Remarks", width: 210 },
-  { key: null, label: "Actions", width: 96 },
+  { key: null, label: "Remarks", width: 170 },
+  { key: null, label: "Actions", width: 112 },
 ];
 
 export default function ProjectsView({ projects, filter, onFilter, onReset, showOwner, remarks, onAddRemark, onDeleteRemark, ...actions }: Props) {
@@ -178,10 +178,14 @@ export default function ProjectsView({ projects, filter, onFilter, onReset, show
                       {latest ? (
                         <>
                           <div className="flex items-center gap-1.5">
-                            <span className="truncate text-[11px] text-foreground">{latest.text}</span>
+                            {/* Latest remark stands out in the brand colour; NEW if added in the last 24 h */}
+                            <span className="truncate text-[11px] font-medium text-primary">{latest.text}</span>
                             {pr.length > 1 && <span className="shrink-0 text-[9px] font-semibold px-1.5 rounded-full bg-primary text-primary-foreground">{pr.length}</span>}
                           </div>
                           <div className="text-[10px] text-fg3 truncate">
+                            {Date.now() - new Date(latest.at).getTime() < 24 * 3600e3 && (
+                              <span className="text-[8px] font-bold tracking-wide px-1 mr-1 rounded bg-status-done-bg text-status-done-txt align-middle">NEW</span>
+                            )}
                             {latest.author ? `${latest.author} · ` : ""}
                             {formatDateTime(latest.at)}
                           </div>

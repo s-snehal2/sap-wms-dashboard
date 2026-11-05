@@ -60,7 +60,7 @@ export function useFloatingWindow() {
     if (!w) w = window.open("", "sap-wms-pins", "popup,width=360,height=560");
     if (!w) return "blocked";
 
-    w.document.title = "🔨 Pinned — SAP/WMS";
+    w.document.title = "🔨 Pinned & 📝 Notes — SAP/WMS";
     w.document.body.innerHTML = "";
     copyStyles(document, w.document);
     w.document.documentElement.className = document.documentElement.className;

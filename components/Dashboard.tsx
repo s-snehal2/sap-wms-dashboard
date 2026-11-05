@@ -1,5 +1,4 @@
 "use client";
-"use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
@@ -16,6 +15,7 @@ import type { AllData } from "@/lib/server/load";
 import UserMenu from "./UserMenu";
 import { usePersistentState } from "@/lib/usePersistentState";
 import { usePinReminders } from "@/lib/usePinReminders";
+
 
 import AnalyticsView from "./AnalyticsView";
 import FloatingPins from "./desktop/FloatingPins";
@@ -623,7 +623,21 @@ export default function Dashboard({ me, initial }: { me: Me; initial: AllData })
       </Tabs>
 
       {renderModal()}
-      {floating.win && <FloatingPins win={floating.win} pins={pins} projects={projects} onOpen={openProjectFromDesktop} onUnpin={unpin} />}
+      {floating.win && (
+        <FloatingPins
+          win={floating.win}
+          pins={pins}
+          projects={projects}
+          notes={notes}
+          onOpen={openProjectFromDesktop}
+          onUnpin={unpin}
+          onAddNote={addNote}
+          onOpenNote={(id) => {
+            setTab("notes");
+            openNote(id);
+          }}
+        />
+      )}
     </div>
   );
 }

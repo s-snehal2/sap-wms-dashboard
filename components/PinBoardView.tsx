@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Bell, BellOff, FileText, Pencil, PictureInPicture2, Pin, PinOff, Search } from "lucide-react";
-import { PIN_EMOJI, PRIORITIES, PRIORITY_BADGE_CLASS, PRIORITY_ORDER, statusColor } from "@/lib/constants";
+import { PIN_EMOJI, PRIORITIES, PRIORITY_BADGE_CLASS, PRIORITY_ORDER, remindLabel, statusColor } from "@/lib/constants";
 import type { Pin as PinType, Priority, Project, Quarter } from "@/lib/types";
 import { cn, qOf, typeClass } from "@/lib/utils";
 import QuarterSummary from "./QuarterSummary";
@@ -184,7 +184,7 @@ export default function PinBoardView(props: Props) {
                 </div>
                 <div className="flex items-center justify-between px-[18px] py-2.5 border-t bg-bg2">
                   <span className="text-[10px] text-fg3">
-                    Pinned {pin.addedAt} · {pin.remind || "weekly"}
+                    Pinned {pin.addedAt} · 🔔 {remindLabel(pin.remind)}
                   </span>
                   {/* Priority can be changed right here — no modal needed */}
                   <select

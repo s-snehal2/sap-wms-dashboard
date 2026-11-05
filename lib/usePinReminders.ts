@@ -28,8 +28,10 @@ export function usePinReminders(pins: Pin[], projects: Project[], enabled: boole
         const every = REMIND_MS[pin.remind];
         const proj = byPid.get(pin.pid);
         if (!every || !proj || sent >= 3) continue; // at most 3 popups at once
+        // First reminder: one interval after pinning. Short intervals (30 min / 1 h) start counting
+        // from now, because the pin only stores the date it was added, not the time.
         const added = Date.parse(pin.addedAt);
-        const prev = last[pin.pid] ?? (isNaN(added) ? now : added);
+        const prev = last[pin.pid] ?? (every < 24 * 3600e3 || isNaN(added) ? (last[pin.pid] = now) : added);
         if (now - prev < every) continue;
         const n = new Notification(`${PIN_EMOJI} ${proj.pid} · ${pin.priority.toUpperCase()}`, {
           body: `${proj.name}\n${proj.status} · ${proj.pct}%${pin.note ? `\n${pin.note}` : ""}`,
