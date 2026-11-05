@@ -43,16 +43,7 @@ const item = {
   },
 };
 
-const lineGrow = {
-  hidden: { scaleX: 0 },
-  show: {
-    scaleX: 1,
-    transition: {
-      duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94] as const,
-    },
-  },
-};
+
 
 export default function LoginForm() {  const ref = useRef(null);
   const inView = useInView(ref, { once: true });

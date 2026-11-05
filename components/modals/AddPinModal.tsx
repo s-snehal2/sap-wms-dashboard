@@ -116,7 +116,7 @@ export default function AddPinModal({
 
             {shown.length === 0 && (
               <p className="text-center py-8 text-xs text-fg3">
-                No projects match "{q}".
+                No projects match.
               </p>
             )}
 
