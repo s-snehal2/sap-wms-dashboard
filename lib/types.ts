@@ -83,4 +83,4 @@ export interface Remark {
   authorId?: string;
 }
 
-export type TabId = "overview" | "projects" | "analytics" | "notes" | "pinboard";
+export type TabId = "dashboard" | "overview" | "projects" | "analytics" | "notes" | "pinboard";

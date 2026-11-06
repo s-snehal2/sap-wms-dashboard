@@ -18,6 +18,7 @@ import { usePinReminders } from "@/lib/usePinReminders";
 
 
 import AnalyticsView from "./AnalyticsView";
+import DashboardView from "./DashboardView";
 import FloatingPins from "./desktop/FloatingPins";
 import { useFloatingWindow } from "./desktop/useFloatingWindow";
 import KpiStrip from "./KpiStrip";
@@ -45,6 +46,7 @@ type ModalState =
 
 const TABS: { id: TabId; label: string }[] = [
   // { id: "overview", label: "Overview" },
+  { id: "dashboard", label: "Dashboard" },
   { id: "projects", label: "All Projects" },
   { id: "analytics", label: "Analytics" },
    { id: "pinboard", label: "Pin Board" },
@@ -74,7 +76,7 @@ export default function Dashboard({ me, initial }: { me: Me; initial: AllData })
   reloadRef.current = useDbSync({ projects: projectsCtl, notes: notesCtl, pins: pinsCtl, remarks: remarksCtl });
   const projectsState = { loading: false };
   // Personal preferences stay in this browser.
-  const [tab, setTab] = usePersistentState<TabId>(LS_TAB, "projects", (v) => TABS.some((t) => t.id === v));
+  const [tab, setTab] = usePersistentState<TabId>(LS_TAB, "dashboard", (v) => TABS.some((t) => t.id === v));
   const [remindersOn, setRemindersOn] = usePersistentState<boolean>("sap_wms_notify_v1", false, (v) => typeof v === "boolean");
 
   const [search, setSearch] = useState("");
@@ -497,7 +499,8 @@ export default function Dashboard({ me, initial }: { me: Me; initial: AllData })
         </div>
       </div>
 
-      <KpiStrip projects={projects} pinnedCount={pins.length} active={kpiFilter} onToggle={setKpiFilter} onOpenPins={() => setTab("pinboard")} />
+      {/* The Dashboard tab has its own KPI cards — hide the strip there so numbers aren't shown twice. */}
+      {tab !== "dashboard" && <KpiStrip projects={projects} pinnedCount={pins.length} active={kpiFilter} onToggle={setKpiFilter} onOpenPins={() => setTab("pinboard")} />}
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as TabId)} className="flex flex-col flex-1 min-h-0">
         <TabsList className="flex w-full justify-start gap-0 h-auto rounded-none border-b bg-background px-6 py-0 overflow-x-auto">
@@ -564,6 +567,9 @@ export default function Dashboard({ me, initial }: { me: Me; initial: AllData })
               )}
             </div>
           )}
+          <TabsContent value="dashboard">
+            <DashboardView projects={projects} remarks={remarks} onEdit={rowHandlers.onEdit} onViewAll={() => setTab("analytics")} />
+          </TabsContent>
           <TabsContent value="projects">
             <ProjectsView
               projects={filtered}
@@ -579,12 +585,12 @@ export default function Dashboard({ me, initial }: { me: Me; initial: AllData })
           <TabsContent value="analytics">
             <AnalyticsView
               projects={projects}
-              onShowStatus={(st) => {
-                clearAll();
-                setKpiFilter(st);
-                setTab("projects");
-              }}
-              {...rowHandlers}
+              remarks={remarks}
+              isPinned={isPinned}
+              onTogglePin={togglePin}
+              onEdit={rowHandlers.onEdit}
+              onAddRemark={addRemark}
+              showOwner={seesOthers}
             />
           </TabsContent>
           <TabsContent value="notes">
